@@ -1,172 +1,193 @@
-<p align="center">
-  <img src="assets/jarv1s-logo.png" alt="Jarv1s" width="400">
-</p>
+# Jarv1s
 
-<p align="center">
-  An AI assistant that runs agents securely in their own containers. Lightweight, built to be easily understood and completely customized for your needs.
-</p>
+**A portable, private AI agent that lives on your machines — not in the cloud.**
 
-<p align="center">
-  <a href="README_zh.md">中文</a>
-</p>
-
-Using Claude Code, Jarv1s can dynamically rewrite its code to customize its feature set for your needs.
-
-**New:** First AI assistant to support [Agent Swarms](https://code.claude.com/docs/en/agent-teams). Spin up teams of agents that collaborate in your chat.
+Jarv1s is a personal AI assistant designed around three principles: **run locally**, **remember meaningfully**, and **move with you**. Your agent's identity, memory, and configuration travel as a single encrypted bundle between your devices — no central server, no cloud dependency, no telemetry.
 
 ## Why Jarv1s
 
-[OpenClaw](https://github.com/openclaw/openclaw) is an impressive project, but I wouldn't have been able to sleep if I had given complex software I didn't understand full access to my life. OpenClaw has nearly half a million lines of code, 53 config files, and 70+ dependencies. Its security is at the application level (allowlists, pairing codes) rather than true OS-level isolation. Everything runs in one Node process with shared memory.
+Most AI assistants are stateless chat interfaces. They don't remember. They can't act. They live on someone else's server.
 
-Jarv1s provides that same core functionality, but in a codebase small enough to understand: one process and a handful of files. Claude agents run in their own Linux containers with filesystem isolation, not merely behind permission checks.
+Jarv1s is different:
 
-## Quick Start
-
-```bash
-git clone <your-jarv1s-repo-url>
-cd jarv1s
-claude
-```
-
-Then run `/setup`. Claude Code handles everything: dependencies, authentication, container setup and service configuration.
-
-## Philosophy
-
-**Small enough to understand.** One process, a few source files and no microservices. If you want to understand the full Jarv1s codebase, just ask Claude Code to walk you through it.
-
-**Secure by isolation.** Agents run in Linux containers (Apple Container on macOS, or Docker) and they can only see what's explicitly mounted. Bash access is safe because commands run inside the container, not on your host.
-
-**Built for the individual user.** Jarv1s isn't a monolithic framework; it's software that fits each user's exact needs. Instead of becoming bloatware, Jarv1s is designed to be bespoke. You make your own fork and have Claude Code modify it to match your needs.
-
-**Customization = code changes.** No configuration sprawl. Want different behavior? Modify the code. The codebase is small enough that it's safe to make changes.
-
-**AI-native.**
-- No installation wizard; Claude Code guides setup.
-- No monitoring dashboard; ask Claude what's happening.
-- No debugging tools; describe the problem and Claude fixes it.
-
-**Skills over features.** Instead of adding features (e.g. support for Telegram) to the codebase, contributors submit [claude code skills](https://code.claude.com/docs/en/skills) like `/add-telegram` that transform your fork. You end up with clean code that does exactly what you need.
-
-**Best harness, best model.** Jarv1s runs on the Claude Agent SDK, which means you're running Claude Code directly. Claude Code is highly capable and its coding and problem-solving capabilities allow it to modify and expand Jarv1s and tailor it to each user.
-
-## What It Supports
-
-- **Messenger I/O** - Message Jarv1s from your phone. Supports WhatsApp, Telegram, Discord, Slack, Signal and headless operation.
-- **Isolated group context** - Each group has its own `CLAUDE.md` memory, isolated filesystem, and runs in its own container sandbox with only that filesystem mounted to it.
-- **Main channel** - Your private channel (self-chat) for admin control; every group is completely isolated
-- **Scheduled tasks** - Recurring jobs that run Claude and can message you back
-- **Web access** - Search and fetch content from the Web
-- **Container isolation** - Agents are sandboxed in Apple Container (macOS) or Docker (macOS/Linux)
-- **Agent Swarms** - Spin up teams of specialized agents that collaborate on complex tasks. Jarv1s is the first personal AI assistant to support agent swarms.
-- **Optional integrations** - Add Gmail (`/add-gmail`) and more via skills
-
-## Usage
-
-Talk to your assistant with the trigger word (default: `@Jarv1s`):
-
-```
-@Jarv1s send an overview of the sales pipeline every weekday morning at 9am (has access to my Obsidian vault folder)
-@Jarv1s review the git history for the past week each Friday and update the README if there's drift
-@Jarv1s every Monday at 8am, compile news on AI developments from Hacker News and TechCrunch and message me a briefing
-```
-
-From the main channel (your self-chat), you can manage groups and tasks:
-```
-@Jarv1s list all scheduled tasks across groups
-@Jarv1s pause the Monday briefing task
-@Jarv1s join the Family Chat group
-```
-
-## Customizing
-
-Jarv1s doesn't use configuration files. To make changes, just tell Claude Code what you want:
-
-- "Change the trigger word to @Bob"
-- "Remember in the future to make responses shorter and more direct"
-- "Add a custom greeting when I say good morning"
-- "Store conversation summaries weekly"
-
-Or run `/customize` for guided changes.
-
-The codebase is small enough that Claude can safely modify it.
-
-## Contributing
-
-**Don't add features. Add skills.**
-
-If you want to add Telegram support, don't create a PR that adds Telegram alongside WhatsApp. Instead, contribute a skill file (`.claude/skills/add-telegram/SKILL.md`) that teaches Claude Code how to transform a Jarv1s installation to use Telegram.
-
-Users then run `/add-telegram` on their fork and get clean code that does exactly what they need, not a bloated system trying to support every use case.
-
-### RFS (Request for Skills)
-
-Skills we'd like to see:
-
-**Communication Channels**
-- `/add-slack` - Add Slack
-
-**Session Management**
-- `/clear` - Add a `/clear` command that compacts the conversation (summarizes context while preserving critical information in the same session). Requires figuring out how to trigger compaction programmatically via the Claude Agent SDK.
-
-## Requirements
-
-- macOS or Linux
-- Node.js 20+
-- [Claude Code](https://claude.ai/download)
-- [Apple Container](https://github.com/apple/container) (macOS) or [Docker](https://docker.com/products/docker-desktop) (macOS/Linux)
+- **Persistent memory** — Conversations become knowledge. Patterns become automations. Jarv1s learns what matters to you.
+- **Local execution** — Runs on your hardware using local LLMs (Ollama, llama.cpp). Your data never leaves your machines.
+- **Portable identity** — Export your entire agent as a single `.jcore` file. Copy it to a USB drive. Load it on another machine. Same Jarv1s.
+- **Actual agency** — Shell commands, file operations, browser automation, IoT control, scheduled tasks. Jarv1s does things, not just talks about them.
+- **Device sync without cloud** — Encrypted peer-to-peer sync between your devices over LAN or direct connection. You control the infrastructure.
 
 ## Architecture
 
 ```
-WhatsApp (baileys) --> SQLite --> Polling loop --> Container (Claude Agent SDK) --> Response
+┌─────────────────────────────────────────────────────────┐
+│                     JARV1S CORE                         │
+├──────────────┬──────────────┬──────────────────────────┤
+│  Cognition   │   Memory     │      Identity Layer       │
+│  Engine      │   Engine     │      (Portable Core)      │
+├──────────────┴──────────────┴──────────────────────────┤
+│                   Context Bus (local IPC)               │
+├───────────┬───────────┬──────────────┬─────────────────┤
+│  Tool     │  Device   │  Automation  │   Sync          │
+│  Runtime  │  Monitor  │  Engine      │   Engine        │
+├───────────┴───────────┴──────────────┴─────────────────┤
+│              Transport Layer (mDNS / P2P / USB)         │
+└─────────────────────────────────────────────────────────┘
 ```
 
-Single Node.js process. Agents execute in isolated Linux containers with filesystem isolation. Only mounted directories are accessible. Per-group message queue with concurrency control. IPC via filesystem.
+### Core Modules
 
-Key files:
-- `src/index.ts` - Orchestrator: state, message loop, agent invocation
-- `src/channels/whatsapp.ts` - WhatsApp connection, auth, send/receive
-- `src/ipc.ts` - IPC watcher and task processing
-- `src/router.ts` - Message formatting and outbound routing
-- `src/group-queue.ts` - Per-group queue with global concurrency limit
-- `src/container-runner.ts` - Spawns streaming agent containers
-- `src/task-scheduler.ts` - Runs scheduled tasks
-- `src/db.ts` - SQLite operations (messages, groups, sessions, state)
-- `groups/*/CLAUDE.md` - Per-group memory
+| Module | Purpose |
+|--------|---------|
+| **Identity Layer** | Agent persona, cryptographic keys, preferences — the "soul" that persists across devices |
+| **Memory Engine** | Three-tier memory: working (session), episodic/semantic (long-term), procedural (learned workflows) |
+| **Cognition Engine** | LLM abstraction layer supporting Ollama, llama.cpp, with OpenAI/Anthropic fallback |
+| **Tool Runtime** | Sandboxed execution of shell, filesystem, browser, calendar, search, and custom tools |
+| **Automation Engine** | Trigger-condition-action system for proactive behaviors |
+| **Sync Engine** | CRDT-based encrypted peer-to-peer sync without central servers |
 
-## FAQ
+## Features
 
-**Why Docker?**
+### Memory That Matters
 
-Docker provides cross-platform support (macOS, Linux and even Windows via WSL2) and a mature ecosystem. On macOS, you can optionally switch to Apple Container via `/convert-to-apple-container` for a lighter-weight native runtime.
+Jarv1s doesn't just log conversations — it extracts facts, detects patterns, and builds procedural knowledge:
 
-**Can I run this on Linux?**
+- **Episodic memory** — What happened (events, conversations)
+- **Semantic memory** — What was learned (facts, relationships, patterns)
+- **Procedural memory** — How to do things (workflows, macros, automations)
+- **Memory compression** — Old conversations summarized, important knowledge retained
 
-Yes. Docker is the default runtime and works on both macOS and Linux. Just run `/setup`.
+### Tool Execution
 
-**Is this secure?**
+Jarv1s can act on your behalf with permission-gated access:
 
-Agents run in containers, not behind application-level permission checks. They can only access explicitly mounted directories. You should still review what you're running, but the codebase is small enough that you actually can. See [docs/SECURITY.md](docs/SECURITY.md) for the full security model.
+- Shell commands (sandboxed, configurable allowlists)
+- Filesystem operations (scoped read/write paths)
+- Browser automation (Playwright-based)
+- System monitoring (processes, network, resources)
+- IoT integration (MQTT, Home Assistant)
+- Custom tools via plugin system
 
-**Why no configuration files?**
+### Proactive Automation
 
-We don't want configuration sprawl. Every user should customize Jarv1s so that the code does exactly what they want, rather than configuring a generic system. If you prefer having config files, you can tell Claude to add them.
+Define triggers that make Jarv1s work without being asked:
 
-**How do I debug issues?**
+- Time-based (cron-style scheduling)
+- Event-based (file changes, system events)
+- Webhook-based (GitHub, CI/CD, custom integrations)
+- Voice-activated (local wake word detection)
 
-Ask Claude Code. "Why isn't the scheduler running?" "What's in the recent logs?" "Why did this message not get a response?" That's the AI-native approach that underlies Jarv1s.
+Jarv1s also learns patterns: *"I noticed you check GitHub issues every morning. Want me to summarize new ones automatically?"*
 
-**Why isn't the setup working for me?**
+### Portable Identity
 
-If you have issues, during setup, Claude will try to dynamically fix them. If that doesn't work, run `claude`, then run `/debug`. If Claude finds an issue that is likely affecting other users, open a PR to modify the setup SKILL.md.
+Your agent's entire state exports as a single encrypted `.jcore` bundle:
 
-**What changes will be accepted into the codebase?**
+```
+jarvis-core/
+├── identity/           # Persona, keys, fingerprint
+├── memory/             # All memory tiers
+├── config/             # Permissions, automations, preferences
+└── manifest.json       # Version, checksum, sync metadata
+```
 
-Only security fixes, bug fixes, and clear improvements will be accepted to the base configuration. That's all.
+Copy it to any machine. Load it. Same Jarv1s.
 
-Everything else (new capabilities, OS compatibility, hardware support, enhancements) should be contributed as skills.
+### Private Sync
 
-This keeps the base system minimal and lets every user customize their installation without inheriting features they don't want.
+Sync between your devices without cloud infrastructure:
+
+- **mDNS discovery** — Automatic detection on local network
+- **P2P sync** — Direct encrypted connection between devices
+- **USB sync** — Air-gap option for maximum security
+- **Optional relay** — Self-hosted relay for cross-network sync (your server, your control)
+
+All sync is end-to-end encrypted with keys you control.
+
+## Interfaces
+
+- **CLI** — Primary interface with rich terminal UI
+- **TUI** — Full terminal dashboard
+- **Voice** — Local wake word + speech-to-text (faster-whisper) + TTS (Piper)
+- **Web** — Optional local web interface
+- **API** — REST/WebSocket for custom integrations
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Language | Python 3.11+ |
+| LLM Runtime | Ollama, llama.cpp |
+| Vector Store | ChromaDB (local) |
+| Database | SQLite |
+| CLI | Typer + Rich |
+| TUI | Textual |
+| Voice STT | faster-whisper |
+| Voice TTS | Piper |
+| Automation | APScheduler + watchdog |
+| IoT | MQTT (paho) + Home Assistant API |
+| Crypto | PyNaCl (libsodium) |
+| Config | Pydantic + YAML |
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone <your-jarv1s-repo-url>
+cd jarv1s
+
+# Install dependencies
+pip install -e .
+
+# Initialize Jarv1s
+jarvis init
+
+# Start the agent
+jarvis run
+```
+
+## Configuration
+
+Permissions and behavior are defined in YAML:
+
+```yaml
+# config/permissions.yaml
+tools:
+  shell:
+    allowed_commands: ["ls", "git", "npm", "python"]
+    blocked_paths: ["/etc", "/sys"]
+    require_confirm: ["rm", "sudo"]
+
+  filesystem:
+    read: ["~/Documents", "~/Projects"]
+    write: ["~/Documents/jarvis-output"]
+    blocked: ["~/.ssh", "~/.gnupg"]
+```
+
+## Roadmap
+
+| Phase | Focus | Status |
+|-------|-------|--------|
+| 1 | Core identity, SQLite memory, Ollama integration, CLI, basic tools | In Progress |
+| 2 | Vector memory, episodic→semantic compression, context retrieval | Planned |
+| 3 | Full tool suite, automation engine, IoT bridge, voice interface | Planned |
+| 4 | Portable `.jcore` bundle, P2P sync, mDNS discovery | Planned |
+| 5 | Plugin API, web UI, single-binary packaging | Planned |
+
+## Design Philosophy
+
+**On cognition:** Don't reinvent reasoning — use local LLMs as the brain and build scaffolding (memory injection, tool routing, plan execution) around them. This is what separates an agent from a chatbot.
+
+**On memory:** Semantic similarity isn't enough. Long-term, Jarv1s will use a local knowledge graph to reason about *relationships* between things you've told it, not just find similar text.
+
+**On portability:** The `.jcore` encrypted bundle is the core UX primitive. Your entire agent fits in one file you can copy to a USB drive. Everything else — mDNS sync, P2P — is convenience on top of that guarantee.
+
+**On privacy:** No telemetry. No analytics. No cloud. The install script should be auditable in 5 minutes. That trust is the entire value proposition.
+
+## Requirements
+
+- Python 3.11+
+- [Ollama](https://ollama.ai/) (for local LLM execution)
+- 8GB+ RAM recommended for local model inference
 
 ## License
 
